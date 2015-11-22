@@ -5,6 +5,7 @@
 
 set(tests
     function_bind_test
+    compatible_test
     contains_test
     function_arith
     function_args

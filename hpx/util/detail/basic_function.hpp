@@ -28,6 +28,9 @@
 
 namespace hpx { namespace util { namespace detail
 {
+    template <typename VTable, typename Sig>
+    class function_base;
+
     ///////////////////////////////////////////////////////////////////////////
     template <typename F>
     static bool is_empty_function(F const&, std::false_type) HPX_NOEXCEPT
@@ -52,9 +55,27 @@ namespace hpx { namespace util { namespace detail
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    template <typename VTable, typename Sig>
-    class function_base;
+    template <typename VTable, typename Sig, typename Function>
+    struct is_compatible_function
+    {
+        typedef char(&no_type)[1];
+        typedef char(&yes_type)[2];
 
+        static no_type call(...);
+
+        template <typename OtherVTable>
+        static typename std::conditional<
+            std::is_convertible<OtherVTable, VTable>::value,
+            yes_type, no_type
+        >::type call(function_base<OtherVTable, Sig>&&);
+
+        static bool const value =
+            sizeof(call(std::declval<Function>())) == sizeof(yes_type);
+
+        typedef std::integral_constant<bool, value> type;
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
     template <typename VTable, typename R, typename ...Ts>
     class function_base<VTable, R(Ts...)>
     {
@@ -68,6 +89,9 @@ namespace hpx { namespace util { namespace detail
                 detail::construct_vtable<detail::empty_function<R(Ts...)> >();
             return &empty_table;
         }
+
+        template <typename OtherVTable, typename OtherSig>
+        friend class function_base;
 
     public:
         function_base() HPX_NOEXCEPT
@@ -107,14 +131,16 @@ namespace hpx { namespace util { namespace detail
         }
 
         template <typename F>
-        void assign(F&& f)
+        typename std::enable_if<
+            !is_compatible_function<VTable, R(Ts...), F>::value
+        >::type assign(F&& f)
         {
             if (!is_empty_function(f))
             {
                 typedef typename std::decay<F>::type target_type;
 
                 VTable const* f_vptr = get_vtable<target_type>();
-                if (vptr == f_vptr)
+                if (vptr->invoke == f_vptr->invoke)
                 {
                     vtable::reconstruct<target_type>(object, std::forward<F>(f));
                 } else {
@@ -126,6 +152,22 @@ namespace hpx { namespace util { namespace detail
                 }
             } else {
                 reset();
+            }
+        }
+
+        template <typename F>
+        typename std::enable_if<
+            is_compatible_function<VTable, R(Ts...), F>::value
+        >::type assign(F&& other) // rvalues-only
+        {
+            reset();
+            if (!other.empty())
+            {
+                vptr = other.vptr;
+                std::memcpy(object, other.object, vtable::function_storage_size);
+
+                other.vptr = other.get_empty_table();
+                vtable::default_construct<empty_function<R(Ts...)> >(other.object);
             }
         }
 
@@ -171,7 +213,7 @@ namespace hpx { namespace util { namespace detail
               , "T shall be Callable with the function signature");
 
             VTable const* f_vptr = get_vtable<target_type>();
-            if (vptr != f_vptr || empty())
+            if (vptr->invoke != f_vptr->invoke || empty())
                 return 0;
 
             return &vtable::get<target_type>(object);
@@ -187,7 +229,7 @@ namespace hpx { namespace util { namespace detail
               , "T shall be Callable with the function signature");
 
             VTable const* f_vptr = get_vtable<target_type>();
-            if (vptr != f_vptr || empty())
+            if (vptr->invoke != f_vptr->invoke || empty())
                 return 0;
 
             return &vtable::get<target_type>(object);
