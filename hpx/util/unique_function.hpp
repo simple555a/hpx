@@ -16,6 +16,7 @@
 #include <hpx/util/detail/pp_strip_parens.hpp>
 #include <hpx/util/detail/unique_function_template.hpp>
 
+#include <boost/mpl/bool.hpp>
 #include <boost/preprocessor/cat.hpp>
 
 #include <utility>
@@ -38,7 +39,7 @@
     namespace hpx { namespace util { namespace detail {                       \
         typedef                                                               \
             serializable_function_registration<                               \
-                unique_function_vtable_ptr<Sig>                               \
+                unique_function_vtable<Sig>                                   \
               , util::decay<HPX_UTIL_STRIP(Functor)>::type                    \
             >                                                                 \
             BOOST_PP_CAT(BOOST_PP_CAT(__,                                     \
