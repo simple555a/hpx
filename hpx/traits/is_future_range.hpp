@@ -1,52 +1,55 @@
 //  Copyright (c) 2007-2012 Hartmut Kaiser
+//  Copyright (c) 2016 Agustin Berge
 //
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(HPX_TRAITS_IS_FUTURE_RANGE_HPP)
+#ifndef HPX_TRAITS_IS_FUTURE_RANGE_HPP
 #define HPX_TRAITS_IS_FUTURE_RANGE_HPP
 
 #include <hpx/traits/is_future.hpp>
 #include <hpx/traits/is_range.hpp>
-#include <hpx/util/decay.hpp>
 
 #include <boost/mpl/bool.hpp>
-#include <boost/mpl/or.hpp>
-#include <boost/range/iterator_range.hpp>
 
-#include <vector>
+#include <type_traits>
 
 namespace hpx { namespace traits
 {
     ///////////////////////////////////////////////////////////////////////////
-    template <typename Range, typename Enable = void>
+    template <typename R, typename Enable = void>
     struct is_future_range
       : boost::mpl::false_
     {};
 
-    template <typename Range>
-    struct is_future_range<Range,
-            typename boost::enable_if<is_range<Range> >::type>
-      : is_future<typename util::decay<Range>::type::value_type>
+    template <typename R>
+    struct is_future_range<
+        R,
+        typename std::enable_if<is_range<R>::value>::type
+    > : is_future<typename range_traits<R>::value_type>
     {};
 
     ///////////////////////////////////////////////////////////////////////////
-    template <typename Range, typename Enable = void>
-    struct future_range_traits;
+    template <typename R, bool IsFutureRange = is_future_range<R>::value>
+    struct future_range_traits
+    {};
 
-    template <typename Range>
-    struct future_range_traits<
-            Range, typename boost::enable_if<is_future_range<Range> >::type
-        >
+    template <typename R>
+    struct future_range_traits<R, true>
     {
-        typedef typename Range::value_type future_type;
+        typedef typename range_traits<R>::value_type future_type;
     };
 
     ///////////////////////////////////////////////////////////////////////////
-    template <typename T>
-    struct is_future_or_future_range
-      : boost::mpl::or_<is_future<T>, is_future_range<T> >
-    {};
+    namespace detail
+    {
+        template <typename T>
+        struct is_future_or_future_range
+          : boost::mpl::bool_<
+                is_future<T>::value || is_future_range<T>::value
+            >
+        {};
+    }
 }}
 
-#endif
+#endif /*HPX_TRAITS_IS_FUTURE_RANGE_HPP*/
