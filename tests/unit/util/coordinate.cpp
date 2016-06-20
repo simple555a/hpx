@@ -20,8 +20,8 @@ void test_bounds1()
     hpx::util::bounds<1> bnds(N1);
 
     {
-        hpx::util::bounds_iterator<1> it = boost::begin(bnds);
-        hpx::util::bounds_iterator<1> end = boost::end(bnds);
+        hpx::util::bounds_iterator<1> it = std::begin(bnds);
+        hpx::util::bounds_iterator<1> end = std::end(bnds);
 
         std::ptrdiff_t count = 0;
         for (/**/; it != end; ++it)
@@ -32,8 +32,8 @@ void test_bounds1()
     }
 
     {
-        hpx::util::bounds_iterator<1> it = boost::begin(bnds);
-        hpx::util::bounds_iterator<1> end = boost::end(bnds);
+        hpx::util::bounds_iterator<1> it = std::begin(bnds);
+        hpx::util::bounds_iterator<1> end = std::end(bnds);
 
         std::ptrdiff_t count = 0;
         for (/**/; it != end; it += 1)
@@ -49,8 +49,8 @@ void test_bounds2()
     hpx::util::bounds<2> bnds({ N1, N2 });
 
     {
-        hpx::util::bounds_iterator<2> it = boost::begin(bnds);
-        hpx::util::bounds_iterator<2> end = boost::end(bnds);
+        hpx::util::bounds_iterator<2> it = std::begin(bnds);
+        hpx::util::bounds_iterator<2> end = std::end(bnds);
 
         std::ptrdiff_t count = 0;
         for (/**/; it != end; ++it)
@@ -61,8 +61,8 @@ void test_bounds2()
     }
 
     {
-        hpx::util::bounds_iterator<2> it = boost::begin(bnds);
-        hpx::util::bounds_iterator<2> end = boost::end(bnds);
+        hpx::util::bounds_iterator<2> it = std::begin(bnds);
+        hpx::util::bounds_iterator<2> end = std::end(bnds);
 
         std::ptrdiff_t count = 0;
         for (/**/; it != end; it += 1)
@@ -78,8 +78,8 @@ void test_bounds3()
     hpx::util::bounds<3> bnds({ N1, N2, N3 });
 
     {
-        hpx::util::bounds_iterator<3> it = boost::begin(bnds);
-        hpx::util::bounds_iterator<3> end = boost::end(bnds);
+        hpx::util::bounds_iterator<3> it = std::begin(bnds);
+        hpx::util::bounds_iterator<3> end = std::end(bnds);
 
         std::ptrdiff_t count = 0;
         for (/**/; it != end; ++it)
@@ -90,8 +90,8 @@ void test_bounds3()
     }
 
     {
-        hpx::util::bounds_iterator<3> it = boost::begin(bnds);
-        hpx::util::bounds_iterator<3> end = boost::end(bnds);
+        hpx::util::bounds_iterator<3> it = std::begin(bnds);
+        hpx::util::bounds_iterator<3> end = std::end(bnds);
 
         std::ptrdiff_t count = 0;
         for (/**/; it != end; it += 1)

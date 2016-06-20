@@ -11,7 +11,7 @@
 
 #include <hpx/util/lightweight_test.hpp>
 
-#include <boost/range/functions.hpp>
+#include <iterator>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Define the vector types to be used.
@@ -38,8 +38,8 @@ T test_transform_reduce(ExPolicy && policy,
     using hpx::util::make_zip_iterator;
     return
         hpx::parallel::transform_reduce(policy,
-            make_zip_iterator(boost::begin(xvalues), boost::begin(yvalues)),
-            make_zip_iterator(boost::end(xvalues), boost::end(yvalues)),
+            make_zip_iterator(std::begin(xvalues), std::begin(yvalues)),
+            make_zip_iterator(std::end(xvalues), std::end(yvalues)),
             multiply(), T(0), std::plus<T>()
         );
 }
@@ -53,8 +53,8 @@ test_transform_reduce_async(ExPolicy && policy,
     using hpx::util::make_zip_iterator;
     return
         hpx::parallel::transform_reduce(policy,
-            make_zip_iterator(boost::begin(xvalues), boost::begin(yvalues)),
-            make_zip_iterator(boost::end(xvalues), boost::end(yvalues)),
+            make_zip_iterator(std::begin(xvalues), std::begin(yvalues)),
+            make_zip_iterator(std::end(xvalues), std::end(yvalues)),
             multiply(), T(0), std::plus<T>()
         );
 }

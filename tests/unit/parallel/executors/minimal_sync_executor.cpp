@@ -10,12 +10,12 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <iterator>
 #include <numeric>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <boost/range/functions.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ void test_bulk_sync(Executor& exec)
     hpx::thread::id tid = hpx::this_thread::get_id();
 
     std::vector<int> v(107);
-    std::iota(boost::begin(v), boost::end(v), std::rand());
+    std::iota(std::begin(v), std::end(v), std::rand());
 
     using hpx::util::placeholders::_1;
     using hpx::util::placeholders::_2;
@@ -92,7 +92,7 @@ void test_bulk_async(Executor& exec)
     hpx::thread::id tid = hpx::this_thread::get_id();
 
     std::vector<int> v(107);
-    std::iota(boost::begin(v), boost::end(v), std::rand());
+    std::iota(std::begin(v), std::end(v), std::rand());
 
     using hpx::util::placeholders::_1;
     using hpx::util::placeholders::_2;

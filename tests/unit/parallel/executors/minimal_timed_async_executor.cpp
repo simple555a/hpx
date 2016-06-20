@@ -10,11 +10,11 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <iterator>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include <boost/range/functions.hpp>
 #include <boost/chrono.hpp>
 
 using namespace boost::chrono;

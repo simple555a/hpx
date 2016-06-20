@@ -8,8 +8,7 @@
 #include <hpx/include/parallel_fill.hpp>
 #include <hpx/util/lightweight_test.hpp>
 
-#include <boost/range/functions.hpp>
-
+#include <iterator>
 #include <numeric>
 #include <string>
 #include <vector>
@@ -28,14 +27,14 @@ void test_fill_n(ExPolicy policy, IteratorTag)
     typedef test::test_iterator<base_iterator, IteratorTag> iterator;
 
     std::vector<std::size_t> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     hpx::parallel::fill_n(policy,
-        iterator(boost::begin(c)), c.size(), 10);
+        iterator(std::begin(c)), c.size(), 10);
 
     // verify values
     std::size_t count = 0;
-    std::for_each(boost::begin(c), boost::end(c),
+    std::for_each(std::begin(c), std::end(c),
         [&count](std::size_t v) -> void {
             HPX_TEST_EQ(v, std::size_t(10));
             ++count;
@@ -50,16 +49,16 @@ void test_fill_n_async(ExPolicy p, IteratorTag)
     typedef test::test_iterator<base_iterator, IteratorTag> iterator;
 
     std::vector<std::size_t> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     hpx::future<iterator> f =
         hpx::parallel::fill_n(p,
-            iterator(boost::begin(c)), c.size(),
+            iterator(std::begin(c)), c.size(),
             10);
     f.wait();
 
     std::size_t count = 0;
-    std::for_each(boost::begin(c), boost::end(c),
+    std::for_each(std::begin(c), std::end(c),
         [&count](std::size_t v) -> void {
             HPX_TEST_EQ(v, std::size_t(10));
             ++count;
@@ -107,13 +106,13 @@ void test_fill_n_exception(ExPolicy policy, IteratorTag)
     typedef test::decorated_iterator <base_iterator, IteratorTag>
         decorated_iterator;
     std::vector<std::size_t> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     bool caught_exception = false;
     try {
         hpx::parallel::fill_n(policy,
             decorated_iterator(
-                boost::begin(c),
+                std::begin(c),
                 [](){ throw std::runtime_error("test"); }),
             c.size(),
             10);
@@ -138,7 +137,7 @@ void test_fill_n_exception_async(ExPolicy p, IteratorTag)
         decorated_iterator;
 
     std::vector<std::size_t> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     bool caught_exception = false;
     bool returned_from_algorithm = false;
@@ -146,7 +145,7 @@ void test_fill_n_exception_async(ExPolicy p, IteratorTag)
         hpx::future<decorated_iterator> f =
             hpx::parallel::fill_n(p,
                 decorated_iterator(
-                    boost::begin(c),
+                    std::begin(c),
                     [](){ throw std::runtime_error("test"); }),
                 c.size(),
                 10);
@@ -209,13 +208,13 @@ void test_fill_n_bad_alloc(ExPolicy policy, IteratorTag)
         decorated_iterator;
 
     std::vector<std::size_t> c(100007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     bool caught_bad_alloc = false;
     try {
         hpx::parallel::fill_n(policy,
             decorated_iterator(
-                boost::begin(c),
+                std::begin(c),
                 [](){ throw std::bad_alloc(); }),
             c.size(),
             10);
@@ -239,7 +238,7 @@ void test_fill_n_bad_alloc_async(ExPolicy p, IteratorTag)
         decorated_iterator;
 
     std::vector<std::size_t> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     bool caught_bad_alloc = false;
     bool returned_from_algorithm = false;
@@ -247,7 +246,7 @@ void test_fill_n_bad_alloc_async(ExPolicy p, IteratorTag)
         hpx::future<decorated_iterator> f =
             hpx::parallel::fill_n(p,
                 decorated_iterator(
-                    boost::begin(c),
+                    std::begin(c),
                     [](){ throw std::bad_alloc(); }),
                 c.size(),
                 10);

@@ -9,8 +9,8 @@
 #include <hpx/util/lightweight_test.hpp>
 
 #include <boost/atomic.hpp>
-#include <boost/range/functions.hpp>
 
+#include <iterator>
 #include <numeric>
 #include <string>
 #include <vector>
@@ -29,14 +29,14 @@ void test_uninitialized_fill(ExPolicy policy, IteratorTag)
     typedef test::test_iterator<base_iterator, IteratorTag> iterator;
 
     std::vector<std::size_t> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     hpx::parallel::uninitialized_fill(policy,
-        iterator(boost::begin(c)), iterator(boost::end(c)), 10);
+        iterator(std::begin(c)), iterator(std::end(c)), 10);
 
     // verify values
     std::size_t count = 0;
-    std::for_each(boost::begin(c), boost::end(c),
+    std::for_each(std::begin(c), std::end(c),
         [&count](std::size_t v) -> void {
             HPX_TEST_EQ(v, std::size_t(10));
             ++count;
@@ -51,16 +51,16 @@ void test_uninitialized_fill_async(ExPolicy p, IteratorTag)
     typedef test::test_iterator<base_iterator, IteratorTag> iterator;
 
     std::vector<std::size_t> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     hpx::future<void> f =
         hpx::parallel::uninitialized_fill(p,
-            iterator(boost::begin(c)), iterator(boost::end(c)),
+            iterator(std::begin(c)), iterator(std::end(c)),
             10);
     f.wait();
 
     std::size_t count = 0;
-    std::for_each(boost::begin(c), boost::end(c),
+    std::for_each(std::begin(c), std::end(c),
         [&count](std::size_t v) -> void {
             HPX_TEST_EQ(v, std::size_t(10));
             ++count;
@@ -108,7 +108,7 @@ void test_uninitialized_fill_exception(ExPolicy policy, IteratorTag)
         decorated_iterator;
 
     std::vector<test::count_instances> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     boost::atomic<std::size_t> throw_after(std::rand() % c.size()); //-V104
     test::count_instances::instance_count.store(0);
@@ -117,13 +117,13 @@ void test_uninitialized_fill_exception(ExPolicy policy, IteratorTag)
     try {
         hpx::parallel::uninitialized_fill(policy,
             decorated_iterator(
-                boost::begin(c),
+                std::begin(c),
                 [&throw_after]()
                 {
                     if (throw_after-- == 0)
                         throw std::runtime_error("test");
                 }),
-            decorated_iterator(boost::end(c)),
+            decorated_iterator(std::end(c)),
             10);
 
         HPX_TEST(false);
@@ -148,7 +148,7 @@ void test_uninitialized_fill_exception_async(ExPolicy p, IteratorTag)
         decorated_iterator;
 
     std::vector<test::count_instances> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     boost::atomic<std::size_t> throw_after(std::rand() % c.size()); //-V104
     test::count_instances::instance_count.store(0);
@@ -159,13 +159,13 @@ void test_uninitialized_fill_exception_async(ExPolicy p, IteratorTag)
         hpx::future<void> f =
             hpx::parallel::uninitialized_fill(p,
                 decorated_iterator(
-                    boost::begin(c),
+                    std::begin(c),
                     [&throw_after]()
                     {
                         if (throw_after-- == 0)
                             throw std::runtime_error("test");
                     }),
-                decorated_iterator(boost::end(c)),
+                decorated_iterator(std::end(c)),
                 10);
 
         returned_from_algorithm = true;
@@ -228,7 +228,7 @@ void test_uninitialized_fill_bad_alloc(ExPolicy policy, IteratorTag)
         decorated_iterator;
 
     std::vector<test::count_instances> c(100007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     boost::atomic<std::size_t> throw_after(std::rand() % c.size()); //-V104
     test::count_instances::instance_count.store(0);
@@ -237,13 +237,13 @@ void test_uninitialized_fill_bad_alloc(ExPolicy policy, IteratorTag)
     try {
         hpx::parallel::uninitialized_fill(policy,
             decorated_iterator(
-                boost::begin(c),
+                std::begin(c),
                 [&throw_after]()
                 {
                     if (throw_after-- == 0)
                         throw std::bad_alloc();
                 }),
-            decorated_iterator(boost::end(c)),
+            decorated_iterator(std::end(c)),
             10);
 
         HPX_TEST(false);
@@ -267,7 +267,7 @@ void test_uninitialized_fill_bad_alloc_async(ExPolicy p, IteratorTag)
         decorated_iterator;
 
     std::vector<test::count_instances> c(10007);
-    std::iota(boost::begin(c), boost::end(c), std::rand());
+    std::iota(std::begin(c), std::end(c), std::rand());
 
     boost::atomic<std::size_t> throw_after(std::rand() % c.size()); //-V104
     test::count_instances::instance_count.store(0);
@@ -278,13 +278,13 @@ void test_uninitialized_fill_bad_alloc_async(ExPolicy p, IteratorTag)
         hpx::future<void> f =
             hpx::parallel::uninitialized_fill(p,
                 decorated_iterator(
-                    boost::begin(c),
+                    std::begin(c),
                     [&throw_after]()
                     {
                         if (throw_after-- == 0)
                             throw std::bad_alloc();
                     }),
-                decorated_iterator(boost::end(c)),
+                decorated_iterator(std::end(c)),
                 10);
 
         returned_from_algorithm = true;

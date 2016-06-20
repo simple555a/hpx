@@ -7,11 +7,11 @@
 #include <hpx/hpx_main.hpp>
 
 #include <iostream>
+#include <iterator>
 #include <string>
 #include <vector>
 
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/range/functions.hpp>
 #include <boost/regex.hpp>
 
 struct pipeline
@@ -57,7 +57,7 @@ int main()
         "Notice: qux",
         "\tError: abc"
       };
-    std::vector<std::string> input(boost::begin(inputs), boost::end(inputs));
+    std::vector<std::string> input(std::begin(inputs), std::end(inputs));
 
     pipeline::process(input);
 

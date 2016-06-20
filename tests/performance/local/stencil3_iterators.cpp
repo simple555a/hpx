@@ -10,13 +10,13 @@
 #include <hpx/util/transform_iterator.hpp>
 #include <hpx/include/iostreams.hpp>
 
+#include <iterator>
 #include <numeric>
 #include <type_traits>
 #include <vector>
 
 #include <boost/cstdint.hpp>
 #include <boost/range/irange.hpp>
-#include <boost/range/functions.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 int test_count = 100;
@@ -261,7 +261,7 @@ namespace hpx { namespace experimental
 boost::uint64_t bench_stencil3_iterator_full()
 {
     std::vector<int> values(partition_size);
-    std::iota(boost::begin(values), boost::end(values), 0);
+    std::iota(std::begin(values), std::end(values), 0);
 
     boost::uint64_t start = hpx::util::high_resolution_clock::now();
 
@@ -340,7 +340,7 @@ namespace hpx { namespace experimental
 boost::uint64_t bench_stencil3_iterator_v1()
 {
     std::vector<int> values(partition_size);
-    std::iota(boost::begin(values), boost::end(values), 0);
+    std::iota(std::begin(values), std::end(values), 0);
 
     boost::uint64_t start = hpx::util::high_resolution_clock::now();
 
@@ -459,7 +459,7 @@ namespace hpx { namespace experimental
 boost::uint64_t bench_stencil3_iterator_v2()
 {
     std::vector<int> values(partition_size);
-    std::iota(boost::begin(values), boost::end(values), 0);
+    std::iota(std::begin(values), std::end(values), 0);
 
     boost::uint64_t start = hpx::util::high_resolution_clock::now();
 
@@ -488,7 +488,7 @@ boost::uint64_t bench_stencil3_iterator_v2()
 boost::uint64_t bench_stencil3_iterator_explicit()
 {
     std::vector<int> values(partition_size);
-    std::iota(boost::begin(values), boost::end(values), 0);
+    std::iota(std::begin(values), std::end(values), 0);
 
     boost::uint64_t start = hpx::util::high_resolution_clock::now();
 
@@ -497,7 +497,7 @@ boost::uint64_t bench_stencil3_iterator_explicit()
 
     auto range = boost::irange(0, partition_size);
 
-    std::for_each(boost::begin(range), boost::end(range),
+    std::for_each(std::begin(range), std::end(range),
         [&result, &values](std::size_t i)
         {
             result += values[i-1] + values[i] + values[i+1];
