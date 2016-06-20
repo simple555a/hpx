@@ -11,8 +11,10 @@
 #if defined(HPX_HAVE_CUDA) && defined(__CUDACC__)
 #include <hpx/lcos/future.hpp>
 #include <hpx/traits/is_executor.hpp>
+#include <hpx/traits/is_range.hpp>
 #include <hpx/util/decay.hpp>
 #include <hpx/util/invoke.hpp>
+#include <hpx/util/range.hpp>
 
 #include <hpx/compute/cuda/allocator.hpp>
 #include <hpx/compute/cuda/detail/launch.hpp>
@@ -23,8 +25,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-
-#include <boost/range/functions.hpp>
 
 namespace hpx { namespace compute { namespace cuda
 {
@@ -88,24 +88,22 @@ namespace hpx { namespace compute { namespace cuda
         template <typename F, typename Shape, typename ... Ts>
         void bulk_launch(F && f, Shape const& shape, Ts &&... ts)
         {
-            std::size_t count = boost::size(shape);
+            std::size_t count = util::size(shape);
 
             int threads_per_block = (std::min)(1024, int(count));
             int num_blocks =
                 int((count + threads_per_block - 1) / threads_per_block);
 
-            typedef typename boost::range_const_iterator<Shape>::type
-                iterator_type;
-            typedef typename std::iterator_traits<iterator_type>::value_type
+            typedef typename hpx::traits::range_traits<Shape>::value_type
                 value_type;
             typedef cuda::allocator<value_type> alloc_type;
             typedef compute::vector<value_type, alloc_type> shape_container_type;
 
             // transfer shape to the GPU
             shape_container_type shape_container(
-                boost::begin(shape), boost::end(shape), alloc_type(target_));
+                util::begin(shape), util::end(shape), alloc_type(target_));
 
-            value_type const* p = &(*boost::begin(shape));
+            value_type const* p = &(*util::begin(shape));
             detail::launch(
                 target_, num_blocks, threads_per_block,
                 [] HPX_DEVICE (F f, value_type * p,

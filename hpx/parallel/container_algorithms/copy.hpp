@@ -11,15 +11,13 @@
 #include <hpx/config.hpp>
 #include <hpx/traits/concepts.hpp>
 #include <hpx/traits/is_iterator.hpp>
+#include <hpx/traits/is_range.hpp>
+#include <hpx/util/range.hpp>
 #include <hpx/util/tagged_pair.hpp>
 
 #include <hpx/parallel/algorithms/copy.hpp>
-#include <hpx/parallel/traits/is_range.hpp>
 #include <hpx/parallel/traits/projected.hpp>
 #include <hpx/parallel/traits/projected_range.hpp>
-#include <hpx/parallel/traits/range_traits.hpp>
-
-#include <boost/range/functions.hpp>
 
 #include <type_traits>
 
@@ -70,19 +68,19 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v1)
     template <typename ExPolicy, typename Rng, typename OutIter,
     HPX_CONCEPT_REQUIRES_(
         is_execution_policy<ExPolicy>::value &&
-        traits::is_range<Rng>::value &&
+        hpx::traits::is_range<Rng>::value &&
         hpx::traits::is_iterator<OutIter>::value)>
     typename util::detail::algorithm_result<
         ExPolicy,
         hpx::util::tagged_pair<
-            tag::in(typename traits::range_traits<Rng>::iterator_type),
+            tag::in(typename hpx::traits::range_traits<Rng>::iterator_type),
             tag::out(OutIter)
         >
     >::type
     copy(ExPolicy && policy, Rng && rng, OutIter dest)
     {
         return copy(std::forward<ExPolicy>(policy),
-            boost::begin(rng), boost::end(rng), dest);
+            hpx::util::begin(rng), hpx::util::end(rng), dest);
     }
 
     /// Copies the elements in the range, defined by [first, last), to another
@@ -159,7 +157,7 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v1)
         typename Proj,
     HPX_CONCEPT_REQUIRES_(
         is_execution_policy<ExPolicy>::value &&
-        traits::is_range<Rng>::value &&
+        hpx::traits::is_range<Rng>::value &&
         traits::is_projected_range<Proj, Rng>::value &&
         hpx::traits::is_iterator<OutIter>::value &&
         traits::is_indirect_callable<
@@ -168,7 +166,7 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v1)
     typename util::detail::algorithm_result<
         ExPolicy,
         hpx::util::tagged_pair<
-            tag::in(typename traits::range_traits<Rng>::iterator_type),
+            tag::in(typename hpx::traits::range_traits<Rng>::iterator_type),
             tag::out(OutIter)
         >
     >::type
@@ -176,7 +174,7 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v1)
         Proj && proj)
     {
         return copy_if(std::forward<ExPolicy>(policy),
-            boost::begin(rng), boost::end(rng), dest, std::forward<F>(f),
+            hpx::util::begin(rng), hpx::util::end(rng), dest, std::forward<F>(f),
             std::forward<Proj>(proj));
     }
 
@@ -184,7 +182,7 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v1)
     template <typename ExPolicy, typename Rng, typename OutIter, typename F,
     HPX_CONCEPT_REQUIRES_(
         is_execution_policy<ExPolicy>::value &&
-        traits::is_range<Rng>::value &&
+        hpx::traits::is_range<Rng>::value &&
         hpx::traits::is_iterator<OutIter>::value &&
         traits::is_indirect_callable<
             F, traits::projected_range<util::projection_identity, Rng>
@@ -192,14 +190,14 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v1)
     typename util::detail::algorithm_result<
         ExPolicy,
         hpx::util::tagged_pair<
-            tag::in(typename traits::range_traits<Rng>::iterator_type),
+            tag::in(typename hpx::traits::range_traits<Rng>::iterator_type),
             tag::out(OutIter)
         >
     >::type
     copy_if(ExPolicy && policy, Rng && rng, OutIter dest, F && f)
     {
         return copy_if(std::forward<ExPolicy>(policy),
-            boost::begin(rng), boost::end(rng), dest, std::forward<F>(f),
+            hpx::util::begin(rng), hpx::util::end(rng), dest, std::forward<F>(f),
             util::projection_identity());
     }
     /// \endcond

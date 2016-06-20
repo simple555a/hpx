@@ -11,17 +11,15 @@
 #include <hpx/config.hpp>
 #include <hpx/traits/concepts.hpp>
 #include <hpx/traits/is_iterator.hpp>
+#include <hpx/traits/is_range.hpp>
+#include <hpx/util/range.hpp>
 #include <hpx/util/tagged_pair.hpp>
 
 #include <hpx/parallel/algorithms/remove_copy.hpp>
 #include <hpx/parallel/tagspec.hpp>
-#include <hpx/parallel/traits/is_range.hpp>
 #include <hpx/parallel/traits/projected.hpp>
 #include <hpx/parallel/traits/projected_range.hpp>
-#include <hpx/parallel/traits/range_traits.hpp>
 #include <hpx/parallel/util/projection_identity.hpp>
-
-#include <boost/range/functions.hpp>
 
 #include <type_traits>
 
@@ -94,7 +92,7 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v1)
         typename Proj = util::projection_identity,
     HPX_CONCEPT_REQUIRES_(
         is_execution_policy<ExPolicy>::value &&
-        traits::is_range<Rng>::value &&
+        hpx::traits::is_range<Rng>::value &&
         hpx::traits::is_iterator<OutIter>::value &&
         traits::is_projected_range<Proj, Rng>::value &&
         traits::is_indirect_callable<
@@ -105,7 +103,7 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v1)
     typename util::detail::algorithm_result<
         ExPolicy,
         hpx::util::tagged_pair<
-            tag::in(typename traits::range_traits<Rng>::iterator_type),
+            tag::in(typename hpx::traits::range_traits<Rng>::iterator_type),
             tag::out(OutIter)
         >
     >::type
@@ -113,7 +111,7 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v1)
         Proj && proj = Proj())
     {
         return remove_copy(std::forward<ExPolicy>(policy),
-            boost::begin(rng), boost::end(rng), dest, val,
+            hpx::util::begin(rng), hpx::util::end(rng), dest, val,
             std::forward<Proj>(proj));
     }
 
@@ -203,7 +201,7 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v1)
         typename Proj = util::projection_identity,
     HPX_CONCEPT_REQUIRES_(
         is_execution_policy<ExPolicy>::value &&
-        traits::is_range<Rng>::value &&
+        hpx::traits::is_range<Rng>::value &&
         hpx::traits::is_iterator<OutIter>::value &&
         traits::is_projected_range<Proj, Rng>::value &&
         traits::is_indirect_callable<
@@ -212,7 +210,7 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v1)
     typename util::detail::algorithm_result<
         ExPolicy,
         hpx::util::tagged_pair<
-            tag::in(typename traits::range_traits<Rng>::iterator_type),
+            tag::in(typename hpx::traits::range_traits<Rng>::iterator_type),
             tag::out(OutIter)
         >
     >::type
@@ -220,7 +218,7 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v1)
         Proj && proj = Proj())
     {
         return remove_copy_if(std::forward<ExPolicy>(policy),
-            boost::begin(rng), boost::end(rng), dest, std::forward<F>(f),
+            hpx::util::begin(rng), hpx::util::end(rng), dest, std::forward<F>(f),
             std::forward<Proj>(proj));
     }
 }}}
